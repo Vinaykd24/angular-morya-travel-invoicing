@@ -1,0 +1,75 @@
+<h1>Invoice List</h1>
+@if(invoiceList$ | async; as invoiceList){ @if(invoiceList.length) {
+
+<div class="p-2">
+  <table mat-table [dataSource]="invoiceList" class="mat-elevation-z8">
+    <!-- Vehicle Column -->
+    <ng-container matColumnDef="vehicle">
+      <th mat-header-cell *matHeaderCellDef>Vehicle</th>
+      <td mat-cell *matCellDef="let element">{{ element.vehicle }}</td>
+    </ng-container>
+
+    <!-- City Column -->
+    <ng-container matColumnDef="city">
+      <th mat-header-cell *matHeaderCellDef>City</th>
+      <td mat-cell *matCellDef="let element">{{ element.city }}</td>
+    </ng-container>
+
+    <!-- startKms Column -->
+    <ng-container matColumnDef="startKms">
+      <th mat-header-cell *matHeaderCellDef>Starting Kms</th>
+      <td mat-cell *matCellDef="let element">{{ element.startKms }}</td>
+    </ng-container>
+
+    <!-- endKms Column -->
+    <ng-container matColumnDef="endKms">
+      <th mat-header-cell *matHeaderCellDef>Ending Kms</th>
+      <td mat-cell *matCellDef="let element">{{ element.endKms }}</td>
+    </ng-container>
+
+    <!-- startTime Column -->
+    <ng-container matColumnDef="startTime">
+      <th mat-header-cell *matHeaderCellDef>Starting Time</th>
+      <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
+    </ng-container>
+
+    <!-- endTime Column -->
+    <ng-container matColumnDef="endTime">
+      <th mat-header-cell *matHeaderCellDef>Ending Time</th>
+      <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
+    </ng-container>
+
+    <!-- parkingCharges Column -->
+    <ng-container matColumnDef="parkingCharges">
+      <th mat-header-cell *matHeaderCellDef>Parking Charges</th>
+      <td mat-cell *matCellDef="let element">{{ element.parkingCharges }}</td>
+    </ng-container>
+
+    <!-- tollCharges Column -->
+    <ng-container matColumnDef="tollCharges">
+      <th mat-header-cell *matHeaderCellDef>Toll Charges</th>
+      <td mat-cell *matCellDef="let element">{{ element.tollCharges }}</td>
+    </ng-container>
+
+    <!-- totalCost Column -->
+    <ng-container matColumnDef="totalCost">
+      <th mat-header-cell *matHeaderCellDef>Total Cost</th>
+      <td mat-cell *matCellDef="let element">{{ element.totalCost }}</td>
+    </ng-container>
+
+    <!-- actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="flex-flex-row justify-between">
+          <button mat-button>Edit</button>
+          <button mat-button>Delete</button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
+} }

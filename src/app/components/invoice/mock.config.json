@@ -1,0 +1,12 @@
+{
+  "cars": [
+    { "value": "car-0", "viewValue": "Innova" },
+    { "value": "car-1", "viewValue": "Swift Desizer" },
+    { "value": "car-2", "viewValue": "Tata Indigo" }
+  ],
+  "cities": [
+    { "value": "city-0", "viewValue": "Pune" },
+    { "value": "city-1", "viewValue": "Delhi" },
+    { "value": "city-2", "viewValue": "Nashik" }
+  ]
+}
