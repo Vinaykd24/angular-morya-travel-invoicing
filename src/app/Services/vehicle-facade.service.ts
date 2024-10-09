@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { VehicleService } from './vehicle.service';
-import { Invoice } from '../models/common.models';
+import { Invoice, UpdatedInvoice } from '../models/common.models';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -25,7 +25,13 @@ export class VehicleFacadeService {
     startTime: string,
     endTime: string,
     driverName: string,
-    vechicleNumber: string
+    vechicleNumber: string,
+    driverNightAllowance: number,
+    pickUpDate: Date,
+    pickUpTime: string,
+    dropDate: Date,
+    dropTime: string,
+    invoiceNumber: number
   ) {
     return this.vehicleService.calculateTotalCost(
       vehicle,
@@ -37,8 +43,18 @@ export class VehicleFacadeService {
       startTime,
       endTime,
       driverName,
-      vechicleNumber
+      vechicleNumber,
+      driverNightAllowance,
+      pickUpDate,
+      pickUpTime,
+      dropDate,
+      dropTime,
+      invoiceNumber
     );
+  }
+
+  getTotalExtraHours() {
+    return this.vehicleService.getTotalExtraHours();
   }
 
   // Add an invoice
@@ -46,11 +62,11 @@ export class VehicleFacadeService {
     this.vehicleService.addInvoice(invoice);
   }
 
-  addInvoiceToDb(invoice: Invoice) {
+  addInvoiceToDb(invoice: UpdatedInvoice) {
     this.vehicleService.addInvoiceToDb(invoice);
   }
 
-  getAllInvoicesFromDb(): Observable<Invoice[]> {
+  getAllInvoicesFromDb(): Observable<UpdatedInvoice[]> {
     return this.vehicleService.getAllInvoicesFromDb();
   }
 

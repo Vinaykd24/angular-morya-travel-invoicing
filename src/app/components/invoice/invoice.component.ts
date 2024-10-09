@@ -10,13 +10,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Invoice, SelectType, VehicleRate } from '../../models/common.models';
+import {
+  Invoice,
+  SelectType,
+  UpdatedInvoice,
+  VehicleRate,
+} from '../../models/common.models';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { VehicleFacadeService } from '../../Services/vehicle-facade.service';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-invoice',
@@ -44,25 +50,29 @@ export class InvoiceComponent implements OnInit {
   editIndex: number | null = null;
   availableVehicles: VehicleRate[] = [];
   invoiceList$!: Observable<Invoice[]>;
-  invoiceListFromDb$!: Observable<Invoice[]>;
+  invoiceListFromDb$!: Observable<UpdatedInvoice[]>;
+  dateTimeForm!: FormGroup;
+  hours: string[] = Array.from({ length: 24 }, (_, i) =>
+    i.toString().padStart(2, '0')
+  );
   dateFilter = (date: Date | null): boolean => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return date ? date <= today : false;
   };
   displayedColumns: string[] = [
-    'vehicle',
+    'model',
     'city',
-    'startKms',
-    'endKms',
-    'parkingCharges',
-    'tollCharges',
+    'startingKms',
+    'endingKms',
+    'pickupDate',
+    'dropDate',
+    'pickupTime',
+    'dropTime',
     'totalCost',
-    'startTime',
-    'endTime',
     'actions',
   ];
-  dataSource: Invoice[] = [];
+  dataSource: UpdatedInvoice[] = [];
   vehicles: SelectType[] = [
     { value: 'car-0', viewValue: 'Innova' },
     { value: 'car-01', viewValue: 'Swift Desizer' },
@@ -70,31 +80,24 @@ export class InvoiceComponent implements OnInit {
   ];
 
   cities: SelectType[] = [
-    { value: 'city-0', viewValue: 'Pune' },
-    { value: 'city-1', viewValue: 'Delhi' },
-    { value: 'city-2', viewValue: 'Nashik' },
+    { value: 'Pune', viewValue: 'Pune' },
+    { value: 'Delhi', viewValue: 'Delhi' },
+    { value: 'Nashik', viewValue: 'Nashik' },
   ];
 
-  // Vehicle rates configuration
-  vehicleRates: { [key: string]: VehicleRate } = {
-    'car-0': { baseRate: 2500, maxKm: 100, extraKmRate: 80, extraHrRate: 200 }, // Base rate Rs 2500 for first 100 km, Rs 80 for each extra km
-    'car-01': {
-      baseRate: 3000,
-      maxKm: 100,
-      extraKmRate: 100,
-      extraHrRate: 250,
-    }, // Base rate Rs 3000 for first 100 km, Rs 100 for each extra km
-    'car-02': { baseRate: 2000, maxKm: 100, extraKmRate: 70, extraHrRate: 300 }, // Base rate Rs 2000 for first 100 km, Rs 70 for each extra km
-  };
-
-  constructor(private vehicleFacade: VehicleFacadeService) {
+  constructor(
+    private vehicleFacade: VehicleFacadeService,
+    private router: Router
+  ) {
     this.vehicleForm = new FormGroup({
       vehicle: new FormControl(null, Validators.required),
       city: new FormControl(null, Validators.required),
       startKms: new FormControl(200, [Validators.required, Validators.min(0)]),
       endKms: new FormControl(320, [Validators.required, Validators.min(0)]),
-      startTime: new FormControl(null, Validators.required),
-      endTime: new FormControl(null, Validators.required),
+      pickUpDate: new FormControl(new Date(), Validators.required),
+      pickUpTime: new FormControl('00', Validators.required),
+      dropDate: new FormControl(new Date(), Validators.required),
+      dropTime: new FormControl('00', Validators.required),
       parkingCharges: new FormControl(100, [
         Validators.required,
         Validators.min(0),
@@ -104,19 +107,47 @@ export class InvoiceComponent implements OnInit {
         Validators.min(0),
       ]),
       driverName: new FormControl(null),
+      driverNightAllowance: new FormControl(null),
+      invoiceNumber: new FormControl(null),
       vehicleNumber: new FormControl('MH123333', [
         Validators.required,
         Validators.min(8),
       ]),
     });
-
-    // Load initial invoices
-    // this.invoices = this.vehicleFacade.getInvoices();
-    // this.dataSource = this.invoices;
   }
 
   ngOnInit(): void {
     this.invoiceListFromDb$ = this.vehicleFacade.getAllInvoicesFromDb();
+  }
+
+  calculateTotalHours() {
+    const startDate = this.vehicleForm.get('pickUpDate')?.value;
+    const endDate = this.vehicleForm.get('dropDate')?.value;
+    const startHour = this.vehicleForm.get('pickUpTime')?.value;
+    const endHour = this.vehicleForm.get('dropTime')?.value;
+
+    if (startDate && endDate && startHour && endHour) {
+      const start = new Date(startDate);
+      start.setHours(parseInt(startHour), 0, 0, 0);
+      const end = new Date(endDate);
+      end.setHours(parseInt(endHour), 0, 0, 0);
+
+      const diffMs = end.getTime() - start.getTime();
+      const diffHours = diffMs / (1000 * 60 * 60);
+      const roundedHours = Math.ceil(diffHours);
+
+      this.dateTimeForm.patchValue(
+        {
+          totalHours: diffHours.toFixed(2),
+          roundedHours: roundedHours,
+        },
+        { emitEvent: false }
+      );
+    }
+  }
+
+  viewInvoice(id: string) {
+    return this.router.navigate([`/invoice/${id}`]);
   }
 
   onCityChange() {
@@ -140,6 +171,12 @@ export class InvoiceComponent implements OnInit {
         endTime,
         driverName,
         vehicleNumber,
+        driverNightAllowance,
+        invoiceNumber,
+        pickUpDate,
+        pickUpTime,
+        dropDate,
+        dropTime,
       } = this.vehicleForm.value;
 
       const totalCost = this.vehicleFacade.calculateTotalCost(
@@ -152,7 +189,13 @@ export class InvoiceComponent implements OnInit {
         startTime,
         endTime,
         driverName,
-        vehicleNumber
+        vehicleNumber,
+        driverNightAllowance,
+        pickUpDate,
+        pickUpTime,
+        dropDate,
+        dropTime,
+        invoiceNumber
       );
 
       const invoice: Invoice = {
@@ -167,6 +210,13 @@ export class InvoiceComponent implements OnInit {
         endTime,
         driverName,
         vehicleNumber,
+        driverNightAllowance,
+        invoiceNumber,
+        pickUpDate,
+        pickUpTime,
+        dropDate,
+        dropTime,
+        totalExtraKm: this.vehicleFacade.getTotalExtraHours(),
       };
 
       if (this.editIndex !== null) {
@@ -174,7 +224,7 @@ export class InvoiceComponent implements OnInit {
         this.editIndex = null;
       } else {
         this.vehicleFacade.addInvoice(invoice);
-        this.vehicleFacade.addInvoiceToDb(invoice);
+        // this.vehicleFacade.addInvoiceToDb(invoice);
       }
 
       // Reset form after submission

@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Invoice, VehicleRate } from '../models/common.models';
+import { Invoice, UpdatedInvoice, VehicleRate } from '../models/common.models';
 import { BehaviorSubject, from, map, Observable, tap } from 'rxjs';
 import {
   addDoc,
@@ -22,11 +22,12 @@ export class VehicleService {
   private invoiceListSubject$ = new BehaviorSubject<Invoice[]>([]);
   private firestore: Firestore = inject(Firestore);
   private invoiceCollection = collection(this.firestore, 'invoices');
+  private extraHourCost = 0;
   constructor() {}
 
   // Define the vehicle rates for each city
   private vehicleRates: { [city: string]: VehicleRate[] } = {
-    'city-0': [
+    Pune: [
       {
         vehicle: 'Cresta',
         baseRate: 2500,
@@ -49,7 +50,7 @@ export class VehicleService {
         extraHrRate: 200,
       },
     ],
-    'city-1': [
+    Delhi: [
       {
         vehicle: 'Cresta',
         baseRate: 2700,
@@ -72,7 +73,7 @@ export class VehicleService {
         extraHrRate: 200,
       },
     ],
-    'city-2': [
+    Nashik: [
       {
         vehicle: 'Cresta',
         baseRate: 2400,
@@ -103,6 +104,27 @@ export class VehicleService {
     return this.vehicleRates[city] || [];
   }
 
+  calculateTotalHours(
+    startDate: Date,
+    endDate: Date,
+    startHour: string,
+    endHour: string
+  ): number {
+    if (startDate && endDate && startHour && endHour) {
+      const start = new Date(startDate);
+      start.setHours(parseInt(startHour), 0, 0, 0);
+      const end = new Date(endDate);
+      end.setHours(parseInt(endHour), 0, 0, 0);
+
+      const diffMs = end.getTime() - start.getTime();
+      const diffHours = diffMs / (1000 * 60 * 60);
+      const roundedHours = Math.ceil(diffHours);
+      return roundedHours;
+    } else {
+      return 0;
+    }
+  }
+
   calculateTotalCost(
     vehicle: string,
     city: string,
@@ -113,9 +135,18 @@ export class VehicleService {
     startTime: string,
     endTime: string,
     driverName: string,
-    vechicleNumber: string
+    vechicleNumber: string,
+    driverNightAllowance: number,
+    pickUpDate: Date,
+    pickUpTime: string,
+    dropDate: Date,
+    dropTime: string,
+    invoiceNumber: number
   ): number {
     const totalKms = endKms - startKms;
+    let totalExtraHrsCost = 0;
+    let totalExtraCharges = 0;
+    let totalExtraKmCharges = 0;
     const rateConfig = this.vehicleRates[city].find(
       (v) => v.vehicle === vehicle
     );
@@ -126,19 +157,23 @@ export class VehicleService {
       if (totalKms <= rateConfig.maxKm) {
         cost = rateConfig.baseRate;
       } else {
-        cost =
-          rateConfig.baseRate +
+        totalExtraKmCharges =
           (totalKms - rateConfig.maxKm) * rateConfig.extraKmRate;
+        cost = rateConfig.baseRate + totalExtraKmCharges;
       }
     }
 
-    // Add parking and toll charges
-    cost += parkingCharges + tollCharges;
+    // Add parking, toll and driverNightAllowance charges
+    totalExtraCharges = parkingCharges + tollCharges;
+    cost += totalExtraCharges + driverNightAllowance;
 
     // Calculate time difference
-    const start = new Date(`1970-01-01T${startTime}:00`);
-    const end = new Date(`1970-01-01T${endTime}:00`);
-    let hoursDiff = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+    let hoursDiff = this.calculateTotalHours(
+      pickUpDate,
+      dropDate,
+      pickUpTime,
+      dropTime
+    );
 
     if (hoursDiff < 0) {
       hoursDiff += 24; // Handle overnight case
@@ -146,26 +181,61 @@ export class VehicleService {
 
     const totalHours = Math.ceil(hoursDiff);
     const defaultHours = 8;
-    const extraHourRate = 250;
+    const extraHourRate = rateConfig?.extraHrRate ? rateConfig.extraHrRate : 0;
+    let extraHours = 0;
 
     // Add extra hour charges after 8 hours
     if (totalHours > defaultHours) {
-      cost += (totalHours - defaultHours) * extraHourRate;
+      extraHours = totalHours - defaultHours;
+      totalExtraHrsCost = extraHours * extraHourRate;
+      cost += totalExtraHrsCost;
     }
-
+    const updatedInvoice: UpdatedInvoice = {
+      defaultCost: rateConfig?.baseRate ? rateConfig?.baseRate : 0,
+      invoiceNumber: invoiceNumber,
+      vehicleNo: vechicleNumber,
+      model: vehicle,
+      pickupDate: pickUpDate,
+      pickupTime: pickUpTime,
+      dropTime,
+      dropDate,
+      driverName,
+      startingKms: startKms,
+      endingKms: endKms,
+      totalKms,
+      totalExtraKmsCost: totalExtraKmCharges,
+      driverAllowance: driverNightAllowance,
+      totalCost: cost,
+      totalExtraKms: rateConfig?.maxKm
+        ? totalKms > rateConfig.maxKm
+          ? totalKms - rateConfig.maxKm
+          : totalKms
+        : totalKms,
+      perExtraHrsRate: rateConfig?.extraHrRate ? rateConfig.extraHrRate : 0,
+      perExtraKmsRate: rateConfig?.extraKmRate ? rateConfig.extraKmRate : 0,
+      totalExtraHrs: extraHours,
+      totalExtraHrsCost: totalExtraHrsCost,
+      city,
+      totalExtraCharges,
+    };
+    this.addInvoiceToDb(updatedInvoice);
     return cost;
+  }
+
+  getTotalExtraHours(): number {
+    return this.extraHourCost;
   }
 
   // Firestore operations
 
-  addInvoiceToDb(invoice: Invoice): Observable<string> {
+  addInvoiceToDb(invoice: UpdatedInvoice): Observable<string> {
     return from(addDoc(this.invoiceCollection, invoice)).pipe(
       tap((data) => console.log(data)),
       map((docRef) => docRef.id)
     );
   }
 
-  getAllInvoicesFromDb(): Observable<Invoice[]> {
+  getAllInvoicesFromDb(): Observable<UpdatedInvoice[]> {
     return from(getDocs(this.invoiceCollection)).pipe(
       map((snapshot: QuerySnapshot<DocumentData>) => {
         return snapshot.docs.map(
@@ -173,7 +243,7 @@ export class VehicleService {
             ({
               id: doc.id,
               ...doc.data(),
-            } as Invoice)
+            } as UpdatedInvoice)
         );
       })
     );
@@ -185,8 +255,8 @@ export class VehicleService {
     return from(updateDoc(itemDoc, updateData));
   }
 
-  getInvoice(id: string): Observable<Invoice | undefined> {
-    const itemDoc = doc(this.firestore, `items/${id}`);
+  getInvoice(id: string): Observable<UpdatedInvoice | undefined> {
+    const itemDoc = doc(this.firestore, `invoices/${id}`);
     return docData(itemDoc, { idField: 'id' }).pipe(
       map((data) => (data ? (data as Invoice) : undefined))
     );

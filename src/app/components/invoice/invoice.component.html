@@ -2,6 +2,18 @@
 <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
   <div class="flex flex-wrap flex-row justify-start gap-2 p-2">
     <div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Invoice Number</mat-label>
+        <input
+          matInput
+          value=""
+          type="number"
+          formControlName="invoiceNumber"
+        />
+      </mat-form-field>
+    </div>
+
+    <div>
       <mat-form-field>
         <mat-label>Select City</mat-label>
         <mat-select formControlName="city" (selectionChange)="onCityChange()">
@@ -30,6 +42,7 @@
         <input matInput value="" type="number" formControlName="startKms" />
       </mat-form-field>
     </div>
+
     <div>
       <mat-form-field class="example-full-width">
         <mat-label>Ending KMs</mat-label>
@@ -37,7 +50,7 @@
       </mat-form-field>
     </div>
 
-    <div>
+    <!-- <div>
       <mat-form-field class="example-full-width">
         <mat-label>Starting Time</mat-label>
         <input matInput value="" type="time" formControlName="startTime" />
@@ -48,7 +61,46 @@
         <mat-label>Ending Time</mat-label>
         <input matInput value="" type="time" formControlName="endTime" />
       </mat-form-field>
-    </div>
+    </div> -->
+
+    <mat-form-field>
+      <mat-label>Pick-up Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickUpDate"
+        formControlName="pickUpDate"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="pickUpDate"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #pickUpDate></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Pick-up Hour</mat-label>
+      <mat-select formControlName="pickUpTime">
+        <mat-option *ngFor="let hour of hours" [value]="hour">{{
+          hour
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Drop Date</mat-label>
+      <input matInput [matDatepicker]="dropDate" formControlName="dropDate" />
+      <mat-datepicker-toggle matSuffix [for]="dropDate"></mat-datepicker-toggle>
+      <mat-datepicker #dropDate></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Drop Hour</mat-label>
+      <mat-select formControlName="dropTime">
+        <mat-option *ngFor="let hour of hours" [value]="hour">{{
+          hour
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <div>
       <mat-form-field class="example-full-width">
@@ -73,6 +125,18 @@
       <mat-form-field class="example-full-width">
         <mat-label>Driver Name</mat-label>
         <input matInput value="" type="text" formControlName="driverName" />
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Driver Night Allowance</mat-label>
+        <input
+          matInput
+          value=""
+          type="number"
+          formControlName="driverNightAllowance"
+        />
       </mat-form-field>
     </div>
 
@@ -110,10 +174,10 @@
 <!-- {{ invoiceListData | json }} -->
 <div class="p-2">
   <table mat-table [dataSource]="invoiceListData" class="mat-elevation-z8">
-    <!-- Vehicle Column -->
-    <ng-container matColumnDef="vehicle">
-      <th mat-header-cell *matHeaderCellDef>Vehicle</th>
-      <td mat-cell *matCellDef="let element">{{ element.vehicle }}</td>
+    <!-- Model Column -->
+    <ng-container matColumnDef="model">
+      <th mat-header-cell *matHeaderCellDef>Model</th>
+      <td mat-cell *matCellDef="let element">{{ element.model }}</td>
     </ng-container>
 
     <!-- City Column -->
@@ -122,40 +186,40 @@
       <td mat-cell *matCellDef="let element">{{ element.city }}</td>
     </ng-container>
 
-    <!-- startKms Column -->
-    <ng-container matColumnDef="startKms">
+    <!-- startingKms Column -->
+    <ng-container matColumnDef="startingKms">
       <th mat-header-cell *matHeaderCellDef>Starting Kms</th>
-      <td mat-cell *matCellDef="let element">{{ element.startKms }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.startingKms }}</td>
     </ng-container>
 
-    <!-- endKms Column -->
-    <ng-container matColumnDef="endKms">
+    <!-- endingKms Column -->
+    <ng-container matColumnDef="endingKms">
       <th mat-header-cell *matHeaderCellDef>Ending Kms</th>
-      <td mat-cell *matCellDef="let element">{{ element.endKms }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.endingKms }}</td>
     </ng-container>
 
-    <!-- startTime Column -->
-    <ng-container matColumnDef="startTime">
-      <th mat-header-cell *matHeaderCellDef>Starting Time</th>
-      <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
+    <!-- pickupDate Column -->
+    <ng-container matColumnDef="pickupDate">
+      <th mat-header-cell *matHeaderCellDef>Pick-up Date</th>
+      <td mat-cell *matCellDef="let element">{{ element.pickupDate }}</td>
     </ng-container>
 
-    <!-- endTime Column -->
-    <ng-container matColumnDef="endTime">
-      <th mat-header-cell *matHeaderCellDef>Ending Time</th>
-      <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
+    <!-- dropDate Column -->
+    <ng-container matColumnDef="dropDate">
+      <th mat-header-cell *matHeaderCellDef>Drop Date</th>
+      <td mat-cell *matCellDef="let element">{{ element.dropDate }}</td>
     </ng-container>
 
-    <!-- parkingCharges Column -->
-    <ng-container matColumnDef="parkingCharges">
-      <th mat-header-cell *matHeaderCellDef>Parking Charges</th>
-      <td mat-cell *matCellDef="let element">{{ element.parkingCharges }}</td>
+    <!-- pickupTime Column -->
+    <ng-container matColumnDef="pickupTime">
+      <th mat-header-cell *matHeaderCellDef>Pick-up Time</th>
+      <td mat-cell *matCellDef="let element">{{ element.pickupTime }}</td>
     </ng-container>
 
-    <!-- tollCharges Column -->
-    <ng-container matColumnDef="tollCharges">
-      <th mat-header-cell *matHeaderCellDef>Toll Charges</th>
-      <td mat-cell *matCellDef="let element">{{ element.tollCharges }}</td>
+    <!-- dropTime Column -->
+    <ng-container matColumnDef="dropTime">
+      <th mat-header-cell *matHeaderCellDef>Drop Time</th>
+      <td mat-cell *matCellDef="let element">{{ element.dropTime }}</td>
     </ng-container>
 
     <!-- totalCost Column -->
@@ -169,8 +233,7 @@
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let element">
         <div class="flex-flex-row justify-between">
-          <button mat-button (click)="onInvoiceEdit(element)">Edit</button>
-          <button mat-button (click)="onDelete(element)">Delete</button>
+          <button mat-button (click)="viewInvoice(element.id)">View</button>
         </div>
       </td>
     </ng-container>
@@ -224,68 +287,3 @@
     </tr> -->
   </tbody>
 </table>
-
-@if (dataSource.length) {
-
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
-
-  <!-- Vehicle Column -->
-  <ng-container matColumnDef="vehicle">
-    <th mat-header-cell *matHeaderCellDef>Vehicle</th>
-    <td mat-cell *matCellDef="let element">{{ element.vehicle }}</td>
-  </ng-container>
-
-  <!-- City Column -->
-  <ng-container matColumnDef="city">
-    <th mat-header-cell *matHeaderCellDef>city</th>
-    <td mat-cell *matCellDef="let element">{{ element.city }}</td>
-  </ng-container>
-
-  <!-- startKms Column -->
-  <ng-container matColumnDef="startKms">
-    <th mat-header-cell *matHeaderCellDef>startKms</th>
-    <td mat-cell *matCellDef="let element">{{ element.startKms }}</td>
-  </ng-container>
-
-  <!-- endKms Column -->
-  <ng-container matColumnDef="endKms">
-    <th mat-header-cell *matHeaderCellDef>endKms</th>
-    <td mat-cell *matCellDef="let element">{{ element.endKms }}</td>
-  </ng-container>
-
-  <!-- startTime Column -->
-  <ng-container matColumnDef="startTime">
-    <th mat-header-cell *matHeaderCellDef>startTime</th>
-    <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
-  </ng-container>
-
-  <!-- endTime Column -->
-  <ng-container matColumnDef="endTime">
-    <th mat-header-cell *matHeaderCellDef>endTime</th>
-    <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
-  </ng-container>
-
-  <!-- parkingCharges Column -->
-  <ng-container matColumnDef="parkingCharges">
-    <th mat-header-cell *matHeaderCellDef>parkingCharges</th>
-    <td mat-cell *matCellDef="let element">{{ element.parkingCharges }}</td>
-  </ng-container>
-
-  <!-- tollCharges Column -->
-  <ng-container matColumnDef="tollCharges">
-    <th mat-header-cell *matHeaderCellDef>tollCharges</th>
-    <td mat-cell *matCellDef="let element">{{ element.tollCharges }}</td>
-  </ng-container>
-
-  <!-- totalCost Column -->
-  <ng-container matColumnDef="totalCost">
-    <th mat-header-cell *matHeaderCellDef>totalCost</th>
-    <td mat-cell *matCellDef="let element">{{ element.totalCost }}</td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-}

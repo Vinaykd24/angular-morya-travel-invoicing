@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { VehicleFacadeService } from '../../Services/vehicle-facade.service';
 import { CommonModule } from '@angular/common';
-import { Invoice } from '../../models/common.models';
+import { Invoice, UpdatedInvoice } from '../../models/common.models';
 import { MatTableModule } from '@angular/material/table';
 import { Observable } from 'rxjs';
 
@@ -20,17 +20,17 @@ import { Observable } from 'rxjs';
 })
 export class InvoiceListComponent implements OnInit {
   invoices!: Signal<Invoice[]>;
-  invoiceList$!: Observable<Invoice[]>;
+  invoiceList$!: Observable<UpdatedInvoice[]>;
   displayedColumns: string[] = [
-    'vehicle',
+    'model',
     'city',
-    'startKms',
-    'endKms',
-    'parkingCharges',
-    'tollCharges',
+    'startingKms',
+    'endingKms',
+    'pickupDate',
+    'dropDate',
+    'pickupTime',
+    'dropTime',
     'totalCost',
-    'startTime',
-    'endTime',
   ];
   dataSource: Invoice[] = [];
 
