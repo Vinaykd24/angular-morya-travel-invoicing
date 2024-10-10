@@ -56,11 +56,11 @@
             </div>
             <div>
               <strong> Starting Date </strong>
-              <span> {{ invoice.pickupDate }} </span>
+              <span> {{ invoice.pickupDate | date }} </span>
             </div>
             <div>
               <strong> Closing Date </strong>
-              <span> {{ invoice.dropDate }} </span>
+              <span> {{ invoice.dropDate | date }} </span>
             </div>
             <div>
               <strong> Starting Time </strong>

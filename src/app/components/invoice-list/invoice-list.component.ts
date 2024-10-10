@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-invoice-list',
@@ -20,6 +21,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
     MatFormFieldModule,
     MatSortModule,
     MatPaginatorModule,
+    MatButtonModule,
   ],
   templateUrl: './invoice-list.component.html',
   styleUrl: './invoice-list.component.scss',
@@ -39,6 +41,7 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
     'pickupTime',
     'dropTime',
     'totalCost',
+    'actions',
   ];
 
   constructor(

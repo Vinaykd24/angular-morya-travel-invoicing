@@ -27,9 +27,9 @@ export class VehicleFacadeService {
     driverName: string,
     vechicleNumber: string,
     driverNightAllowance: number,
-    pickUpDate: Date,
+    pickUpDate: string,
     pickUpTime: string,
-    dropDate: Date,
+    dropDate: string,
     dropTime: string,
     invoiceNumber: number
   ) {

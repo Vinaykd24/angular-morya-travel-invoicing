@@ -1,6 +1,6 @@
 <h4>New Invoice</h4>
 <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-  <div class="flex flex-wrap flex-row justify-start gap-2 p-2">
+  <div class="flex flex-wrap flex-row justify-between gap-2 p-2">
     <div>
       <mat-form-field class="example-full-width">
         <mat-label>Invoice Number</mat-label>
@@ -50,57 +50,55 @@
       </mat-form-field>
     </div>
 
-    <!-- <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Starting Time</mat-label>
-        <input matInput value="" type="time" formControlName="startTime" />
+    <div>
+      <mat-form-field>
+        <mat-label>Pick-up Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickUpDate"
+          formControlName="pickUpDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="pickUpDate"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #pickUpDate></mat-datepicker>
       </mat-form-field>
     </div>
+
     <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Ending Time</mat-label>
-        <input matInput value="" type="time" formControlName="endTime" />
+      <mat-form-field>
+        <mat-label>Pick-up Hour</mat-label>
+        <mat-select formControlName="pickUpTime">
+          <mat-option *ngFor="let hour of hours" [value]="hour">{{
+            hour
+          }}</mat-option>
+        </mat-select>
       </mat-form-field>
-    </div> -->
+    </div>
 
-    <mat-form-field>
-      <mat-label>Pick-up Date</mat-label>
-      <input
-        matInput
-        [matDatepicker]="pickUpDate"
-        formControlName="pickUpDate"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="pickUpDate"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #pickUpDate></mat-datepicker>
-    </mat-form-field>
+    <div>
+      <mat-form-field>
+        <mat-label>Drop Date</mat-label>
+        <input matInput [matDatepicker]="dropDate" formControlName="dropDate" />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="dropDate"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #dropDate></mat-datepicker>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field>
-      <mat-label>Pick-up Hour</mat-label>
-      <mat-select formControlName="pickUpTime">
-        <mat-option *ngFor="let hour of hours" [value]="hour">{{
-          hour
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Drop Date</mat-label>
-      <input matInput [matDatepicker]="dropDate" formControlName="dropDate" />
-      <mat-datepicker-toggle matSuffix [for]="dropDate"></mat-datepicker-toggle>
-      <mat-datepicker #dropDate></mat-datepicker>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Drop Hour</mat-label>
-      <mat-select formControlName="dropTime">
-        <mat-option *ngFor="let hour of hours" [value]="hour">{{
-          hour
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div>
+      <mat-form-field>
+        <mat-label>Drop Hour</mat-label>
+        <mat-select formControlName="dropTime">
+          <mat-option *ngFor="let hour of hours" [value]="hour">{{
+            hour
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <div>
       <mat-form-field class="example-full-width">
@@ -168,82 +166,7 @@
     <button mat-flat-button>Generate Invoice</button>
   </div>
 </form>
-<h3 class="text-center py-3">Invoices</h3>
-@if(invoiceListFromDb$ | async; as invoiceListData) {
-@if(invoiceListData.length) {
-<!-- {{ invoiceListData | json }} -->
-<div class="p-2">
-  <table mat-table [dataSource]="invoiceListData" class="mat-elevation-z8">
-    <!-- Model Column -->
-    <ng-container matColumnDef="model">
-      <th mat-header-cell *matHeaderCellDef>Model</th>
-      <td mat-cell *matCellDef="let element">{{ element.model }}</td>
-    </ng-container>
-
-    <!-- City Column -->
-    <ng-container matColumnDef="city">
-      <th mat-header-cell *matHeaderCellDef>City</th>
-      <td mat-cell *matCellDef="let element">{{ element.city }}</td>
-    </ng-container>
-
-    <!-- startingKms Column -->
-    <ng-container matColumnDef="startingKms">
-      <th mat-header-cell *matHeaderCellDef>Starting Kms</th>
-      <td mat-cell *matCellDef="let element">{{ element.startingKms }}</td>
-    </ng-container>
-
-    <!-- endingKms Column -->
-    <ng-container matColumnDef="endingKms">
-      <th mat-header-cell *matHeaderCellDef>Ending Kms</th>
-      <td mat-cell *matCellDef="let element">{{ element.endingKms }}</td>
-    </ng-container>
-
-    <!-- pickupDate Column -->
-    <ng-container matColumnDef="pickupDate">
-      <th mat-header-cell *matHeaderCellDef>Pick-up Date</th>
-      <td mat-cell *matCellDef="let element">{{ element.pickupDate }}</td>
-    </ng-container>
-
-    <!-- dropDate Column -->
-    <ng-container matColumnDef="dropDate">
-      <th mat-header-cell *matHeaderCellDef>Drop Date</th>
-      <td mat-cell *matCellDef="let element">{{ element.dropDate }}</td>
-    </ng-container>
-
-    <!-- pickupTime Column -->
-    <ng-container matColumnDef="pickupTime">
-      <th mat-header-cell *matHeaderCellDef>Pick-up Time</th>
-      <td mat-cell *matCellDef="let element">{{ element.pickupTime }}</td>
-    </ng-container>
-
-    <!-- dropTime Column -->
-    <ng-container matColumnDef="dropTime">
-      <th mat-header-cell *matHeaderCellDef>Drop Time</th>
-      <td mat-cell *matCellDef="let element">{{ element.dropTime }}</td>
-    </ng-container>
-
-    <!-- totalCost Column -->
-    <ng-container matColumnDef="totalCost">
-      <th mat-header-cell *matHeaderCellDef>Total Cost</th>
-      <td mat-cell *matCellDef="let element">{{ element.totalCost }}</td>
-    </ng-container>
-
-    <!-- actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let element">
-        <div class="flex-flex-row justify-between">
-          <button mat-button (click)="viewInvoice(element.id)">View</button>
-        </div>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-</div>
-} }
-<table *ngIf="invoices.length > 0">
+<!-- <table *ngIf="invoices.length > 0">
   <thead>
     <tr>
       <th>Vehicle</th>
@@ -272,18 +195,5 @@
       </td>
     </tr>
     }
-    <!-- <tr *ngFor="let invoice of invoices; let i = index">
-      <td>{{ invoice.vehicle }}</td>
-      <td>{{ invoice.city }}</td>
-      <td>{{ invoice.startKms }}</td>
-      <td>{{ invoice.endKms }}</td>
-      <td>{{ invoice.totalCost }}</td>
-      <td>{{ invoice.startTime }}</td>
-      <td>{{ invoice.endTime }}</td>
-      <td>
-        <button (click)="onEdit(i)">Edit</button>
-        <button (click)="onDelete(i)">Delete</button>
-      </td>
-    </tr> -->
   </tbody>
-</table>
+</table> -->

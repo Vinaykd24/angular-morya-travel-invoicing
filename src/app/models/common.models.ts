@@ -41,9 +41,9 @@ export interface UpdatedInvoice {
   companyName?: string;
   vehicleNo: string;
   model: string;
-  pickupDate: Date;
+  pickupDate: Date | string | null;
   pickupTime: string;
-  dropDate: Date;
+  dropDate: Date | string | null;
   dropTime: string;
   driverName?: string;
   startingKms: number;

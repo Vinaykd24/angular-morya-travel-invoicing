@@ -13,6 +13,11 @@ import {
   QuerySnapshot,
   updateDoc,
 } from '@angular/fire/firestore';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +26,7 @@ export class VehicleService {
   private invoicesListSignal = signal<Invoice[]>([]);
   private invoiceListSubject$ = new BehaviorSubject<Invoice[]>([]);
   private firestore: Firestore = inject(Firestore);
+  private snackBar = inject(MatSnackBar);
   private invoiceCollection = collection(this.firestore, 'invoices');
   private extraHourCost = 0;
   constructor() {}
@@ -105,8 +111,8 @@ export class VehicleService {
   }
 
   calculateTotalHours(
-    startDate: Date,
-    endDate: Date,
+    startDate: string,
+    endDate: string,
     startHour: string,
     endHour: string
   ): number {
@@ -137,9 +143,9 @@ export class VehicleService {
     driverName: string,
     vechicleNumber: string,
     driverNightAllowance: number,
-    pickUpDate: Date,
+    pickUpDate: string,
     pickUpTime: string,
-    dropDate: Date,
+    dropDate: string,
     dropTime: string,
     invoiceNumber: number
   ): number {
@@ -230,7 +236,13 @@ export class VehicleService {
 
   addInvoiceToDb(invoice: UpdatedInvoice): Observable<string> {
     return from(addDoc(this.invoiceCollection, invoice)).pipe(
-      tap((data) => console.log(data)),
+      tap((docRef) => {
+        this.snackBar.open('Invoice Generated Successfully!', 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+        });
+      }),
       map((docRef) => docRef.id)
     );
   }
@@ -238,13 +250,25 @@ export class VehicleService {
   getAllInvoicesFromDb(): Observable<UpdatedInvoice[]> {
     return from(getDocs(this.invoiceCollection)).pipe(
       map((snapshot: QuerySnapshot<DocumentData>) => {
-        return snapshot.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            } as UpdatedInvoice)
-        );
+        return snapshot.docs.map((doc) => {
+          const data = doc.data() as UpdatedInvoice;
+
+          // Convert Firestore timestamps to JavaScript Date objects for pickupDate and dropDate
+          const pickupDate = data.pickupDate
+            ? new Date((data.pickupDate as any).seconds * 1000)
+            : null;
+          const dropDate = data.dropDate
+            ? new Date((data.dropDate as any).seconds * 1000)
+            : null;
+
+          // Return the updated invoice with replaced pickupDate and dropDate, and the id
+          return {
+            id: doc.id, // Ensure id is included
+            ...data, // Spread the rest of the data
+            pickupDate, // Replace pickupDate with the Date object
+            dropDate, // Replace dropDate with the Date object
+          };
+        });
       })
     );
   }
@@ -258,8 +282,45 @@ export class VehicleService {
   getInvoice(id: string): Observable<UpdatedInvoice | undefined> {
     const itemDoc = doc(this.firestore, `invoices/${id}`);
     return docData(itemDoc, { idField: 'id' }).pipe(
-      map((data) => (data ? (data as Invoice) : undefined))
+      map((data) => {
+        if (!data) {
+          return undefined;
+        }
+
+        const updatedData = data as UpdatedInvoice;
+
+        // Convert Firestore timestamps to JavaScript Date objects
+        const pickupDate = updatedData.pickupDate
+          ? new Date((updatedData.pickupDate as any).seconds * 1000)
+          : null;
+        const dropDate = updatedData.dropDate
+          ? new Date((updatedData.dropDate as any).seconds * 1000)
+          : null;
+
+        // Return the updated invoice with replaced date values and id
+        return {
+          id, // Ensure the id is included
+          ...updatedData, // Spread existing invoice data
+          pickupDate, // Replace pickupDate
+          dropDate, // Replace dropDate
+        } as UpdatedInvoice;
+      })
     );
+  }
+
+  formatDate(
+    date: { seconds: number; nanoseconds: number } | string | number
+  ): Date {
+    let dateObject: Date;
+
+    if (typeof date === 'object' && 'seconds' in date) {
+      // Convert Firestore timestamp to JavaScript Date
+      dateObject = new Date(date.seconds * 1000);
+    } else {
+      dateObject = new Date(date);
+    }
+
+    return dateObject;
   }
 
   addInvoice(invoice: Invoice) {
