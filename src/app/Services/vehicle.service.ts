@@ -37,6 +37,7 @@ export class VehicleService {
       {
         vehicle: 'Innova',
         baseRate: 3000,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 250,
         extraHrRate: 20,
@@ -44,6 +45,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 3300,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 300,
         extraHrRate: 22,
@@ -51,6 +53,7 @@ export class VehicleService {
       {
         vehicle: 'Sedan',
         baseRate: 1900,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 150,
         extraHrRate: 15,
@@ -60,6 +63,7 @@ export class VehicleService {
       {
         vehicle: 'Innova',
         baseRate: 3500,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 250,
         extraHrRate: 20,
@@ -67,6 +71,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 4000,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 300,
         extraHrRate: 22,
@@ -74,6 +79,7 @@ export class VehicleService {
       {
         vehicle: 'Sedan',
         baseRate: 2400,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 180,
         extraHrRate: 16,
@@ -83,6 +89,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 3500,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 300,
         extraHrRate: 23,
@@ -90,6 +97,7 @@ export class VehicleService {
       {
         vehicle: 'Sedan',
         baseRate: 2200,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 175,
         extraHrRate: 15,
@@ -99,6 +107,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 3500,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 300,
         extraHrRate: 23,
@@ -106,6 +115,7 @@ export class VehicleService {
       {
         vehicle: 'Sedan',
         baseRate: 2400,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 180,
         extraHrRate: 15,
@@ -115,6 +125,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 4500,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 300,
         extraHrRate: 23,
@@ -122,6 +133,7 @@ export class VehicleService {
       {
         vehicle: 'Sedan',
         baseRate: 2400,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 180,
         extraHrRate: 15,
@@ -131,6 +143,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 4500,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 300,
         extraHrRate: 23,
@@ -138,6 +151,7 @@ export class VehicleService {
       {
         vehicle: 'Sedan',
         baseRate: 2600,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 180,
         extraHrRate: 16,
@@ -147,6 +161,7 @@ export class VehicleService {
       {
         vehicle: 'Crysta',
         baseRate: 3000,
+        defaultHours: 8,
         maxKm: 80,
         extraKmRate: 180,
         extraHrRate: 16,
@@ -188,8 +203,6 @@ export class VehicleService {
     endKms: number,
     parkingCharges: number,
     tollCharges: number,
-    startTime: string,
-    endTime: string,
     driverName: string,
     vechicleNumber: string,
     driverNightAllowance: number,
@@ -197,7 +210,9 @@ export class VehicleService {
     pickUpTime: string,
     dropDate: string,
     dropTime: string,
-    invoiceNumber: number
+    invoiceNumber: number,
+    custName: string,
+    companyName: string
   ): number {
     const totalKms = endKms - startKms;
     let totalExtraHrsCost = 0;
@@ -236,7 +251,9 @@ export class VehicleService {
     }
 
     const totalHours = Math.ceil(hoursDiff);
-    const defaultHours = 8;
+    const defaultHours = rateConfig?.defaultHours
+      ? rateConfig?.defaultHours
+      : 8;
     const extraHourRate = rateConfig?.extraHrRate ? rateConfig.extraHrRate : 0;
     let extraHours = 0;
 
@@ -274,6 +291,8 @@ export class VehicleService {
       city,
       totalExtraCharges,
       createdDate: new Date(),
+      custName,
+      companyName,
     };
     this.addInvoiceToDb(updatedInvoice);
     return cost;
@@ -287,14 +306,14 @@ export class VehicleService {
 
   addInvoiceToDb(invoice: UpdatedInvoice): Observable<string> {
     return from(addDoc(this.invoiceCollection, invoice)).pipe(
-      tap((docRef) => {
+      map((docRef) => {
         this.snackBar.open('Invoice Generated Successfully!', 'Close', {
           duration: 3000,
           verticalPosition: 'top',
           horizontalPosition: 'center',
         });
-      }),
-      map((docRef) => docRef.id)
+        return docRef.id;
+      })
     );
   }
 

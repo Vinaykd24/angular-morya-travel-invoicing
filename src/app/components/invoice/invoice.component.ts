@@ -121,6 +121,8 @@ export class InvoiceComponent implements OnInit {
         ]),
         driverName: new FormControl(null),
         driverNightAllowance: new FormControl(null),
+        custName: new FormControl(null),
+        companyName: new FormControl(null),
         invoiceNumber: new FormControl(null),
         vehicleNumber: new FormControl('MH123333', [
           Validators.required,
@@ -188,8 +190,6 @@ export class InvoiceComponent implements OnInit {
         endKms,
         parkingCharges,
         tollCharges,
-        startTime,
-        endTime,
         driverName,
         vehicleNumber,
         driverNightAllowance,
@@ -198,6 +198,8 @@ export class InvoiceComponent implements OnInit {
         pickUpTime,
         dropDate,
         dropTime,
+        custName,
+        companyName,
       } = this.vehicleForm.value;
 
       const totalCost = this.vehicleFacade.calculateTotalCost(
@@ -207,8 +209,6 @@ export class InvoiceComponent implements OnInit {
         endKms,
         parkingCharges,
         tollCharges,
-        startTime,
-        endTime,
         driverName,
         vehicleNumber,
         driverNightAllowance,
@@ -216,37 +216,10 @@ export class InvoiceComponent implements OnInit {
         pickUpTime,
         dropDate,
         dropTime,
-        invoiceNumber
-      );
-
-      const invoice: Invoice = {
-        vehicle,
-        city,
-        startKms,
-        endKms,
-        parkingCharges,
-        tollCharges,
-        totalCost,
-        startTime,
-        endTime,
-        driverName,
-        vehicleNumber,
-        driverNightAllowance,
         invoiceNumber,
-        pickUpDate,
-        pickUpTime,
-        dropDate,
-        dropTime,
-        totalExtraKm: this.vehicleFacade.getTotalExtraHours(),
-      };
-
-      if (this.editIndex !== null) {
-        this.vehicleFacade.updateInvoice(this.editIndex, invoice);
-        this.editIndex = null;
-      } else {
-        this.vehicleFacade.addInvoice(invoice);
-        // this.vehicleFacade.addInvoiceToDb(invoice);
-      }
+        custName,
+        companyName
+      );
 
       // Reset form after submission
       this.vehicleForm.reset();
@@ -309,23 +282,4 @@ export class InvoiceComponent implements OnInit {
   getInvoices() {
     return this.vehicleFacade.getInvoices();
   }
-
-  // onEdit(index: number) {
-  //   const invoice = this.invoices[index];
-  //   this.editIndex = index;
-  //   this.vehicleForm.setValue({
-  //     vehicle: invoice.vehicle,
-  //     city: invoice.city,
-  //     startKms: invoice.startKms,
-  //     endKms: invoice.endKms,
-  //     startTime: invoice.startTime,
-  //     endTime: invoice.endTime,
-  //     parkingCharges: invoice.parkingCharges,
-  //     tollCharges: invoice.tollCharges,
-  //   });
-  // }
-
-  // onDelete(index: number) {
-  //   this.invoices.splice(index, 1);
-  // }
 }

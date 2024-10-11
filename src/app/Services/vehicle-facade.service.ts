@@ -22,8 +22,6 @@ export class VehicleFacadeService {
     endKms: number,
     parkingCharges: number,
     tollCharges: number,
-    startTime: string,
-    endTime: string,
     driverName: string,
     vechicleNumber: string,
     driverNightAllowance: number,
@@ -31,7 +29,9 @@ export class VehicleFacadeService {
     pickUpTime: string,
     dropDate: string,
     dropTime: string,
-    invoiceNumber: number
+    invoiceNumber: number,
+    custName: string,
+    companyName: string
   ) {
     return this.vehicleService.calculateTotalCost(
       vehicle,
@@ -40,8 +40,6 @@ export class VehicleFacadeService {
       endKms,
       parkingCharges,
       tollCharges,
-      startTime,
-      endTime,
       driverName,
       vechicleNumber,
       driverNightAllowance,
@@ -49,7 +47,9 @@ export class VehicleFacadeService {
       pickUpTime,
       dropDate,
       dropTime,
-      invoiceNumber
+      invoiceNumber,
+      custName,
+      companyName
     );
   }
 

@@ -6,6 +6,7 @@ export interface SelectType {
 export interface VehicleRate {
   vehicle?: string;
   baseRate: number;
+  defaultHours: number;
   maxKm: number;
   extraKmRate: number;
   extraHrRate: number;
@@ -15,8 +16,8 @@ export interface Invoice {
   id?: string;
   vehicle: string;
   city: string;
-  startKms: number;
-  endKms: number;
+  startKms?: number;
+  endKms?: number;
   parkingCharges: number;
   tollCharges: number;
   totalCost: number;
