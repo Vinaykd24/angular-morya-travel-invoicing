@@ -273,6 +273,7 @@ export class VehicleService {
       totalExtraHrsCost: totalExtraHrsCost,
       city,
       totalExtraCharges,
+      createdDate: new Date(),
     };
     this.addInvoiceToDb(updatedInvoice);
     return cost;

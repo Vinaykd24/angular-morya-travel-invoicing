@@ -1,4 +1,4 @@
-<h4>New Invoice</h4>
+<h4 class="text-center">New Invoice</h4>
 <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
   @if(vehicleForm.errors?.['startKmsGreater']){
   <mat-error
@@ -10,168 +10,188 @@
   <mat-error>Drop time should not be earlier than the pick-up time.</mat-error>
   }
   <div class="flex flex-wrap flex-row justify-between gap-2 p-2">
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Invoice Number</mat-label>
-        <input
-          matInput
-          value=""
-          type="number"
-          formControlName="invoiceNumber"
-        />
-      </mat-form-field>
+    <div class="flex flex-auto flex-col gap-3">
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Invoice Number</mat-label>
+          <input
+            matInput
+            value=""
+            type="number"
+            formControlName="invoiceNumber"
+          />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Select City</mat-label>
+          <mat-select formControlName="city" (selectionChange)="onCityChange()">
+            @for (city of cities; track city) {
+            <mat-option [value]="city.value">{{ city.viewValue }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      @if (availableVehicles.length) {
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Select Car</mat-label>
+          <mat-select formControlName="vehicle">
+            @for (car of availableVehicles; track car) {
+            <mat-option [value]="car.vehicle">{{ car.vehicle }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
+
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Starting KMs</mat-label>
+          <input matInput value="" type="number" formControlName="startKms" />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Ending KMs</mat-label>
+          <input matInput value="" type="number" formControlName="endKms" />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Pick-up Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="pickUpDate"
+            [matDatepickerFilter]="dateFilter"
+            formControlName="pickUpDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickUpDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickUpDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Pick-up Hour</mat-label>
+          <mat-select formControlName="pickUpTime">
+            <mat-option *ngFor="let hour of hours" [value]="hour">{{
+              hour
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Drop Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="dropDate"
+            [matDatepickerFilter]="dateFilter"
+            formControlName="dropDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="dropDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #dropDate></mat-datepicker>
+        </mat-form-field>
+      </div>
     </div>
 
-    <div>
-      <mat-form-field>
-        <mat-label>Select City</mat-label>
-        <mat-select formControlName="city" (selectionChange)="onCityChange()">
-          @for (city of cities; track city) {
-          <mat-option [value]="city.value">{{ city.viewValue }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    @if (availableVehicles.length) {
-    <div>
-      <mat-form-field>
-        <mat-label>Select Car</mat-label>
-        <mat-select formControlName="vehicle">
-          @for (car of availableVehicles; track car) {
-          <mat-option [value]="car.vehicle">{{ car.vehicle }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    }
+    <div class="flex flex-auto flex-col gap-3">
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Drop Hour</mat-label>
+          <mat-select formControlName="dropTime">
+            <mat-option *ngFor="let hour of hours" [value]="hour">{{
+              hour
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Starting KMs</mat-label>
-        <input matInput value="" type="number" formControlName="startKms" />
-      </mat-form-field>
-    </div>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Enter Parking Charges</mat-label>
+          <input
+            matInput
+            value=""
+            type="number"
+            formControlName="parkingCharges"
+          />
+        </mat-form-field>
+      </div>
 
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Ending KMs</mat-label>
-        <input matInput value="" type="number" formControlName="endKms" />
-      </mat-form-field>
-    </div>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Enter Toll Charges</mat-label>
+          <input
+            matInput
+            value=""
+            type="number"
+            formControlName="tollCharges"
+          />
+        </mat-form-field>
+      </div>
 
-    <div>
-      <mat-form-field>
-        <mat-label>Pick-up Date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="pickUpDate"
-          formControlName="pickUpDate"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="pickUpDate"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #pickUpDate></mat-datepicker>
-      </mat-form-field>
-    </div>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Driver Name</mat-label>
+          <input matInput value="" type="text" formControlName="driverName" />
+        </mat-form-field>
+      </div>
 
-    <div>
-      <mat-form-field>
-        <mat-label>Pick-up Hour</mat-label>
-        <mat-select formControlName="pickUpTime">
-          <mat-option *ngFor="let hour of hours" [value]="hour">{{
-            hour
-          }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Driver Night Allowance</mat-label>
+          <input
+            matInput
+            value=""
+            type="number"
+            formControlName="driverNightAllowance"
+          />
+        </mat-form-field>
+      </div>
 
-    <div>
-      <mat-form-field>
-        <mat-label>Drop Date</mat-label>
-        <input matInput [matDatepicker]="dropDate" formControlName="dropDate" />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="dropDate"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #dropDate></mat-datepicker>
-      </mat-form-field>
-    </div>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Vehicle Number</mat-label>
+          <input
+            matInput
+            value=""
+            type="text"
+            formControlName="vehicleNumber"
+          />
+        </mat-form-field>
+      </div>
 
-    <div>
-      <mat-form-field>
-        <mat-label>Drop Hour</mat-label>
-        <mat-select formControlName="dropTime">
-          <mat-option *ngFor="let hour of hours" [value]="hour">{{
-            hour
-          }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Enter Parking Charges</mat-label>
-        <input
-          matInput
-          value=""
-          type="number"
-          formControlName="parkingCharges"
-        />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Enter Toll Charges</mat-label>
-        <input matInput value="" type="number" formControlName="tollCharges" />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Driver Name</mat-label>
-        <input matInput value="" type="text" formControlName="driverName" />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Driver Night Allowance</mat-label>
-        <input
-          matInput
-          value=""
-          type="number"
-          formControlName="driverNightAllowance"
-        />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field class="example-full-width">
-        <mat-label>Vehicle Number</mat-label>
-        <input matInput value="" type="text" formControlName="vehicleNumber" />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field>
-        <mat-label>invoice date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="picker"
-          [matDatepickerFilter]="dateFilter"
-        />
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="picker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>invoice date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [matDatepickerFilter]="dateFilter"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
     </div>
   </div>
-  <div class="flex flex-row justify-center">
+  <div class="flex flex-row justify-center pt-3">
     <button mat-flat-button>Generate Invoice</button>
   </div>
 </form>

@@ -59,4 +59,5 @@ export interface UpdatedInvoice {
   totalExtraHrsCost: number;
   city: string;
   totalExtraCharges: number;
+  createdDate?: Date | string | null;
 }
