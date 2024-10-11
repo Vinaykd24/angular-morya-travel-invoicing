@@ -2,10 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'indianRupeesToWords',
-  standalone: true,
+  standalone: true, // This makes the pipe standalone
 })
 export class IndianRupeesToWordsPipe implements PipeTransform {
-  private static readonly ones = [
+  private units: string[] = [
     '',
     'One',
     'Two',
@@ -27,8 +27,7 @@ export class IndianRupeesToWordsPipe implements PipeTransform {
     'Eighteen',
     'Nineteen',
   ];
-
-  private static readonly tens = [
+  private tens: string[] = [
     '',
     '',
     'Twenty',
@@ -40,57 +39,62 @@ export class IndianRupeesToWordsPipe implements PipeTransform {
     'Eighty',
     'Ninety',
   ];
-
-  private static readonly scales = ['', 'Thousand', 'Lakh', 'Crore'];
+  private scales: string[] = ['', 'Thousand', 'Lakh', 'Crore'];
 
   transform(value: number): string {
     if (isNaN(value) || value === null) return '';
     if (value === 0) return 'Zero Rupees';
 
-    const rupees = Math.floor(value);
-    const paise = Math.round((value - rupees) * 100);
+    const integerPart = Math.floor(value);
+    const decimalPart = Math.round((value - integerPart) * 100); // Getting paise
 
-    let result = this.convertWholeNumber(rupees) + ' Rupees' + ' Only';
+    let wordString =
+      this.convertNumberToWords(integerPart) + ' Rupees' + ' Only';
 
-    if (paise > 0) {
-      result += ' and ' + this.convertWholeNumber(paise) + ' Paise' + ' Only';
+    if (decimalPart > 0) {
+      wordString +=
+        ` and ${this.convertNumberToWords(decimalPart)} Paise` + ' Only';
     }
 
-    return result;
+    return wordString;
   }
 
-  private convertWholeNumber(num: number): string {
-    if (num === 0) return '';
-    if (num < 20) return IndianRupeesToWordsPipe.ones[num];
+  private convertNumberToWords(value: number): string {
+    let result = '';
+    let scaleIndex = 0;
 
-    let words = '';
-    for (let i = 3; i >= 0; i--) {
-      const divisor = Math.pow(10, 2 * i);
-      if (num >= divisor) {
-        let quotient = Math.floor(num / divisor);
-        num %= divisor;
-        if (quotient > 99) {
-          words +=
-            this.convertWholeNumber(Math.floor(quotient / 100)) + ' Hundred ';
-          quotient %= 100;
-        }
-        if (quotient > 0) {
-          if (words !== '') words += ' ';
-          words += this.convertTwoDigits(quotient);
-          words += ' ' + IndianRupeesToWordsPipe.scales[i];
-        }
+    while (value > 0) {
+      let chunk = value % 1000;
+
+      if (chunk > 0) {
+        let chunkInWords = this.convertChunkToWords(chunk);
+        result = chunkInWords + ' ' + this.scales[scaleIndex] + ' ' + result;
       }
+
+      value = Math.floor(value / 1000);
+      scaleIndex++;
     }
-    return words.trim();
+
+    return result.trim();
   }
 
-  private convertTwoDigits(num: number): string {
-    if (num < 20) return IndianRupeesToWordsPipe.ones[num];
-    const tenner = Math.floor(num / 10);
-    const rest = num % 10;
-    return (
-      IndianRupeesToWordsPipe.tens[tenner] +
-      (rest !== 0 ? '-' + IndianRupeesToWordsPipe.ones[rest] : '')
-    );
+  private convertChunkToWords(chunk: number): string {
+    let chunkStr = '';
+
+    if (chunk > 99) {
+      chunkStr += this.units[Math.floor(chunk / 100)] + ' Hundred ';
+      chunk %= 100;
+    }
+
+    if (chunk > 19) {
+      chunkStr += this.tens[Math.floor(chunk / 10)] + ' ';
+      chunk %= 10;
+    }
+
+    if (chunk > 0) {
+      chunkStr += this.units[chunk] + ' ';
+    }
+
+    return chunkStr.trim();
   }
 }
