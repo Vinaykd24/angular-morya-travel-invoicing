@@ -87,7 +87,11 @@ export class InvoiceComponent implements OnInit {
   cities: SelectType[] = [
     { value: 'Pune', viewValue: 'Pune' },
     { value: 'Delhi', viewValue: 'Delhi' },
-    { value: 'Nashik', viewValue: 'Nashik' },
+    { value: 'Mumbai', viewValue: 'Mumbai' },
+    { value: 'Banglore', viewValue: 'Banglore' },
+    { value: 'Baroda', viewValue: 'Baroda' },
+    { value: 'Jaipur', viewValue: 'Jaipur' },
+    { value: 'Hyderabad', viewValue: 'Hyderabad' },
   ];
 
   constructor(
