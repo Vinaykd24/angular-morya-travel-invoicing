@@ -23,6 +23,11 @@ import { CommonModule } from '@angular/common';
 import { VehicleFacadeService } from '../../Services/vehicle-facade.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { startKmsLessThanEndKms } from '../../validators/start-end-km.validator';
+import {
+  dropDateAfterPickUpDate,
+  droptimeAfterPickUptime,
+} from '../../validators/drop-date.validator';
 
 @Component({
   selector: 'app-invoice',
@@ -89,31 +94,43 @@ export class InvoiceComponent implements OnInit {
     private vehicleFacade: VehicleFacadeService,
     private router: Router
   ) {
-    this.vehicleForm = new FormGroup({
-      vehicle: new FormControl(null, Validators.required),
-      city: new FormControl(null, Validators.required),
-      startKms: new FormControl(200, [Validators.required, Validators.min(0)]),
-      endKms: new FormControl(320, [Validators.required, Validators.min(0)]),
-      pickUpDate: new FormControl(new Date(), Validators.required),
-      pickUpTime: new FormControl('00', Validators.required),
-      dropDate: new FormControl(new Date(), Validators.required),
-      dropTime: new FormControl('00', Validators.required),
-      parkingCharges: new FormControl(100, [
-        Validators.required,
-        Validators.min(0),
-      ]),
-      tollCharges: new FormControl(300, [
-        Validators.required,
-        Validators.min(0),
-      ]),
-      driverName: new FormControl(null),
-      driverNightAllowance: new FormControl(null),
-      invoiceNumber: new FormControl(null),
-      vehicleNumber: new FormControl('MH123333', [
-        Validators.required,
-        Validators.min(8),
-      ]),
-    });
+    this.vehicleForm = new FormGroup(
+      {
+        vehicle: new FormControl(null, Validators.required),
+        city: new FormControl(null, Validators.required),
+        startKms: new FormControl(200, [
+          Validators.required,
+          Validators.min(0),
+        ]),
+        endKms: new FormControl(320, [Validators.required, Validators.min(0)]),
+        pickUpDate: new FormControl(new Date(), Validators.required),
+        pickUpTime: new FormControl('00', Validators.required),
+        dropDate: new FormControl(new Date(), Validators.required),
+        dropTime: new FormControl('00', Validators.required),
+        parkingCharges: new FormControl(100, [
+          Validators.required,
+          Validators.min(0),
+        ]),
+        tollCharges: new FormControl(300, [
+          Validators.required,
+          Validators.min(0),
+        ]),
+        driverName: new FormControl(null),
+        driverNightAllowance: new FormControl(null),
+        invoiceNumber: new FormControl(null),
+        vehicleNumber: new FormControl('MH123333', [
+          Validators.required,
+          Validators.min(8),
+        ]),
+      },
+      {
+        validators: [
+          startKmsLessThanEndKms(),
+          dropDateAfterPickUpDate(),
+          droptimeAfterPickUptime(),
+        ],
+      }
+    );
   }
 
   ngOnInit(): void {

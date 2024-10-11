@@ -1,5 +1,14 @@
 <h4>New Invoice</h4>
 <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+  @if(vehicleForm.errors?.['startKmsGreater']){
+  <mat-error
+    >Start kilometers should not be greater than end kilometers.</mat-error
+  >
+  } @if(vehicleForm.errors?.['dropDateBeforePickUp']){
+  <mat-error>Drop date should not be earlier than the pick-up date.</mat-error>
+  } @if(vehicleForm.errors?.['dropTimeBeforePickUp']){
+  <mat-error>Drop time should not be earlier than the pick-up time.</mat-error>
+  }
   <div class="flex flex-wrap flex-row justify-between gap-2 p-2">
     <div>
       <mat-form-field class="example-full-width">
