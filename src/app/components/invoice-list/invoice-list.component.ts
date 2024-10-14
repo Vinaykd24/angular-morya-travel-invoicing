@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-list',
@@ -22,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatSortModule,
     MatPaginatorModule,
     MatButtonModule,
+    MatSnackBarModule,
   ],
   templateUrl: './invoice-list.component.html',
   styleUrl: './invoice-list.component.scss',
@@ -97,6 +99,13 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
 
   viewInvoice(id: string) {
     return this.router.navigate([`/invoice/${id}`]);
+  }
+
+  deleteInvoice(id: string) {
+    this.vehicleFacadeService.deleteInvoiceFromDb(id);
+    return this.vehicleFacadeService.showSnackBar(
+      'Invoice deleted successfully'
+    );
   }
 
   applyFilter(event: Event) {

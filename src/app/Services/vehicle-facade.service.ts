@@ -76,6 +76,14 @@ export class VehicleFacadeService {
     return this.vehicleService.updateInvoiceFromDb(invoice);
   }
 
+  deleteInvoiceFromDb(id: string) {
+    return this.vehicleService.deleteInvoiceFromDb(id);
+  }
+
+  showSnackBar(message: string) {
+    this.vehicleService.showSnackBar(message);
+  }
+
   getInvoice(id: string) {
     return this.vehicleService.getInvoice(id);
   }

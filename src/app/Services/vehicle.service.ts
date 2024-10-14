@@ -1,13 +1,24 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Invoice, UpdatedInvoice, VehicleRate } from '../models/common.models';
-import { BehaviorSubject, from, map, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import {
   addDoc,
   collection,
   collectionData,
+  deleteDoc,
   doc,
   docData,
   DocumentData,
+  DocumentReference,
   Firestore,
   getDocs,
   QuerySnapshot,
@@ -16,7 +27,9 @@ import {
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
+  MatSnackBarRef,
   MatSnackBarVerticalPosition,
+  TextOnlySnackBar,
 } from '@angular/material/snack-bar';
 
 @Injectable({
@@ -341,6 +354,43 @@ export class VehicleService {
             dropDate, // Replace dropDate with the Date object
           };
         });
+      })
+    );
+  }
+
+  deleteInvoiceFromDb(invoiceId: string): Observable<void> {
+    console.log('Starting delete operation for invoice:', invoiceId);
+    const invoiceDocRef = doc(this.invoiceCollection, invoiceId);
+
+    return from(deleteDoc(invoiceDocRef)).pipe(
+      switchMap(() => {
+        console.log('Delete operation completed successfully');
+        return this.showSnackBar('Invoice deleted successfully');
+      }),
+      map(() => undefined),
+      catchError((error) => {
+        console.error('Error during delete operation:', error);
+        return this.showSnackBar('Error deleting invoice').pipe(
+          switchMap(() => {
+            throw error;
+          })
+        );
+      })
+    );
+  }
+
+  showSnackBar(message: string): Observable<MatSnackBarRef<TextOnlySnackBar>> {
+    return of(
+      this.snackBar.open(message, 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+      })
+    ).pipe(
+      tap(() => console.log('Snackbar opened')),
+      catchError((error) => {
+        console.error('Error showing snackbar:', error);
+        throw error;
       })
     );
   }

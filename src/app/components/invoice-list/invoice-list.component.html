@@ -80,6 +80,7 @@
       <td mat-cell *matCellDef="let element">
         <div class="flex-flex-row justify-between">
           <button mat-button (click)="viewInvoice(element.id)">View</button>
+          <button mat-button (click)="deleteInvoice(element.id)">Delete</button>
         </div>
       </td>
     </ng-container>
