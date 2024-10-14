@@ -121,7 +121,7 @@ export class VehicleService {
         extraKmRate: 15,
       },
     ],
-    Baroda: [
+    Gujrat: [
       {
         vehicle: 'Crysta',
         baseRate: 4500,

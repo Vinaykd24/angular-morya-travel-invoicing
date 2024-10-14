@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  OnInit,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -28,6 +33,7 @@ import {
   dropDateAfterPickUpDate,
   droptimeAfterPickUptime,
 } from '../../validators/drop-date.validator';
+import { CdkTextareaAutosize, TextFieldModule } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-invoice',
@@ -43,6 +49,7 @@ import {
     ReactiveFormsModule,
     CommonModule,
     MatTableModule,
+    TextFieldModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './invoice.component.html',
@@ -65,6 +72,7 @@ export class InvoiceComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
     return date ? date <= today : false;
   };
+
   displayedColumns: string[] = [
     'model',
     'city',
@@ -89,7 +97,7 @@ export class InvoiceComponent implements OnInit {
     { value: 'Delhi', viewValue: 'Delhi' },
     { value: 'Mumbai', viewValue: 'Mumbai' },
     { value: 'Banglore', viewValue: 'Banglore' },
-    { value: 'Baroda', viewValue: 'Baroda' },
+    { value: 'Gujrat', viewValue: 'Gujrat' },
     { value: 'Jaipur', viewValue: 'Jaipur' },
     { value: 'Hyderabad', viewValue: 'Hyderabad' },
   ];
@@ -285,4 +293,13 @@ export class InvoiceComponent implements OnInit {
   getInvoices() {
     return this.vehicleFacade.getInvoices();
   }
+}
+function inject(Injector: any) {
+  throw new Error('Function not implemented.');
+}
+
+function ViewChild(
+  arg0: string
+): (target: InvoiceComponent, propertyKey: 'autosize') => void {
+  throw new Error('Function not implemented.');
 }
