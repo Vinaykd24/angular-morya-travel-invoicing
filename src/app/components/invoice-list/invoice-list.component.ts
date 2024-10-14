@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -32,6 +32,7 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   displayedColumns: string[] = [
+    'invoiceNumber',
     'model',
     'city',
     'startingKms',
@@ -54,25 +55,44 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Set up the paginator after the view has been initialized
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.dataSource.sortingDataAccessor = (
+      item: UpdatedInvoice,
+      property: string
+    ) => {
+      switch (property) {
+        case 'invoiceNumber':
+          const invoiceNum = item.invoiceNumber;
+          return invoiceNum !== undefined ? Number(invoiceNum) : -1;
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   loadInvoices() {
-    this.vehicleFacadeService.getAllInvoicesFromDb().subscribe(
-      (data) => {
+    this.vehicleFacadeService.getAllInvoicesFromDb().subscribe({
+      next: (data) => {
         this.dataSource.data = data;
-        // Ensure the paginator is set after data is loaded
         setTimeout(() => {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
+
+          // Force a sort by invoiceNumber after data is loaded
+          this.sort.sort({
+            id: 'invoiceNumber',
+            start: 'desc',
+            disableClear: false,
+          });
+          this.dataSource.sort = this.sort;
         });
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching invoices:', error);
-      }
-    );
+      },
+    });
   }
 
   viewInvoice(id: string) {

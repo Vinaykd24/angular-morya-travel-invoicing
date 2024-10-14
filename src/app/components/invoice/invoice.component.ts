@@ -128,6 +128,7 @@ export class InvoiceComponent implements OnInit {
           Validators.required,
           Validators.min(8),
         ]),
+        particulars: new FormControl(null),
       },
       {
         validators: [
@@ -200,6 +201,7 @@ export class InvoiceComponent implements OnInit {
         dropTime,
         custName,
         companyName,
+        particulars,
       } = this.vehicleForm.value;
 
       const totalCost = this.vehicleFacade.calculateTotalCost(
@@ -218,7 +220,8 @@ export class InvoiceComponent implements OnInit {
         dropTime,
         invoiceNumber,
         custName,
-        companyName
+        companyName,
+        particulars
       );
 
       // Reset form after submission

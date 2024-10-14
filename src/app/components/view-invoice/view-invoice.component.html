@@ -5,19 +5,10 @@
     <div>
       <h4>
         Morya Tours & Travels
-        <p class="text-sm">Service at your doorstep</p>
+        <p class="text-sm pt-1">Mobile: 985087 3934 | 9011222756</p>
       </h4>
-      <div>
-        <span class="block">Sagar Vihar | Flat No. 604,</span>
-        <span class="block">Shinde Vasati | Ravet, Pune</span>
-      </div>
     </div>
     <div>
-      <p>
-        For Booking Call
-        <span class="block"> Mr. Nilesh Awate </span>
-        <span class="block">985087 3934 | 9011222756</span>
-      </p>
       <p>
         <span class="block">Invoice No: {{ invoice.invoiceNumber }}</span>
         <span class="block">Date: 1 Jan 2024</span>
@@ -25,6 +16,11 @@
     </div>
   </section>
   <section class="py-8">
+    <span class="block">To,</span>
+    <span class="block">{{ invoice.custName }}</span>
+    <span class="block">{{ invoice.companyName }}</span>
+  </section>
+  <!-- <section class="py-8">
     <div
       class="flex flex-row w-full border border-black items-center align-middle p-3"
     >
@@ -32,63 +28,62 @@
       <div class="flex-grow text-center font-medium">TAX INVOICE</div>
       <div class="text-right flex-grow">Original for Recipient</div>
     </div>
-  </section>
+  </section> -->
   <section>
     <div class="flex flex-row justify-between">
       <div class="border border-black flex flex-col basis-1/2">
-        <div class="p-2 border-b border-black">Customer Details</div>
+        <div class="p-2 border-b border-black">Particulars</div>
         <div class="p-3">
-          <span class="block">{{ invoice.custName }}</span>
-          <span class="block">{{ invoice.companyName }}</span>
+          <span class="block">{{ invoice.particulars }}</span>
         </div>
       </div>
       <div class="border border-black flex flex-col basis-1/2">
         <div class="border-b border-black p-2">Vehicle Details</div>
-        <section class="flex flex-row justify-between p-3">
-          <div class="flex flex-col gap-2">
-            <div>
+        <section class="flex flex-row justify-between">
+          <div class="flex flex-col w-2/3 border-r border-black">
+            <div class="border-b border-black p-2">
               <strong> Vehicle No </strong>
               <span> {{ invoice.vehicleNo }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Model </strong>
               <span> {{ invoice.model }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Starting Date </strong>
               <span> {{ invoice.pickupDate | date }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Closing Date </strong>
               <span> {{ invoice.dropDate | date }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Starting Time </strong>
               <span> {{ invoice.pickupTime }} </span>
             </div>
-            <div>
+            <div class="p-2">
               <strong> Ending TIme </strong>
               <span> {{ invoice.dropTime }} </span>
             </div>
           </div>
-          <div class="flex flex-col gap-2">
-            <div>
+          <div class="flex flex-col w-1/2">
+            <div class="border-b border-black p-2">
               <strong> Starting KM </strong>
               <span> {{ invoice.startingKms }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Ending KM </strong>
               <span> {{ invoice.endingKms }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Total KM </strong>
               <span> {{ invoice.totalKms }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Extra KM </strong>
               <span> {{ invoice.totalExtraKms }} </span>
             </div>
-            <div>
+            <div class="border-b border-black p-2">
               <strong> Extra Hours </strong>
               <span> {{ invoice.totalExtraHrs }} </span>
             </div>
@@ -98,11 +93,11 @@
     </div>
   </section>
   <section class="pt-5">
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="border-r border-black basis-1/2 p-1">First 80 Kms/8 Hrs</div>
       <div class="p-1">{{ invoice.defaultCost | currency : "INR" }}</div>
     </div>
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="border-r border-black basis-1/2 p-1">
         Extra KMs ( {{ invoice.perExtraKmsRate | currency : "INR" }} Per KM)
       </div>
@@ -110,15 +105,15 @@
         {{ invoice.totalExtraKmsCost | currency : "INR" }}
       </div>
     </div>
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="border-r border-black basis-1/2 p-1">
-        Extra HRs ( {{ invoice.perExtraHrsRate | currency : "INR" }} Per KM)
+        Extra HRs ( {{ invoice.perExtraHrsRate | currency : "INR" }} Per Hr)
       </div>
       <div class="p-1">
         {{ invoice.totalExtraHrsCost | currency : "INR" }}
       </div>
     </div>
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="border-r border-black basis-1/2 p-1">
         Airport Parking, Toll and Taxes
       </div>
@@ -126,19 +121,19 @@
         {{ invoice.totalExtraCharges | currency : "INR" }}
       </div>
     </div>
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="border-r border-black basis-1/2 p-1">Driver's Allowance</div>
       <div class="p-1">
         {{ invoice.driverAllowance | currency : "INR" }}
       </div>
     </div>
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="border-r border-black basis-1/2 p-1">Total</div>
       <div class="p-1">
         {{ invoice.totalCost | currency : "INR" }}
       </div>
     </div>
-    <div class="flex flex-row justify-between w-1/2 border border-black">
+    <div class="flex flex-row justify-between w-2/3 border border-black">
       <div class="w-full p-1 italic text-right">
         {{ invoice.totalCost | indianRupeesToWords }}
       </div>
