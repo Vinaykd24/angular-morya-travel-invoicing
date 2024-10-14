@@ -122,9 +122,9 @@ export class InvoiceComponent implements OnInit {
         driverName: new FormControl(null),
         driverNightAllowance: new FormControl(null),
         custName: new FormControl(null),
-        companyName: new FormControl(null),
+        companyName: new FormControl('Valeo Ind Pvt Ltd.'),
         invoiceNumber: new FormControl(null),
-        vehicleNumber: new FormControl('MH123333', [
+        vehicleNumber: new FormControl(null, [
           Validators.required,
           Validators.min(8),
         ]),
