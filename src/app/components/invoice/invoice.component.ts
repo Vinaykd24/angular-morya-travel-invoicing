@@ -182,6 +182,10 @@ export class InvoiceComponent implements OnInit {
     return this.router.navigate([`/invoice/${id}`]);
   }
 
+  goToInvoiceList() {
+    return this.router.navigate(['/invoice-list']);
+  }
+
   onCityChange() {
     const city = this.vehicleForm.value.city;
     if (city) {
@@ -240,6 +244,7 @@ export class InvoiceComponent implements OnInit {
       // Update the invoices list
       this.invoices = this.vehicleFacade.getInvoices();
       this.invoiceListFromDb$ = this.vehicleFacade.getAllInvoicesFromDb();
+      this.goToInvoiceList();
       // this.dataSource = this.invoices;
     }
   }

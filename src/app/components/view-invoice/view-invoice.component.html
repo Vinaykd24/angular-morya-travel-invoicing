@@ -5,11 +5,11 @@
     <div>
       <h4>
         Morya Tours & Travels
-        <p class="text-sm pt-1">Mobile: 985087 3934 | 888853 3745</p>
-        <p class="text-sm">{{ "nilesh.awate01@gmail.com" }}</p>
-        <p class="text-sm pt-1">Address:</p>
-        <p class="text-sm">Premlok Park, Chinchwad</p>
-        <p class="text-sm">Pune, 411 033</p>
+        <div class="text-sm pt-1">Mobile: 985087 3934 | 888853 3745</div>
+        <div class="text-sm">{{ "nilesh.awate01@gmail.com" }}</div>
+        <div class="text-sm pt-6">Address:</div>
+        <div class="text-sm">Premlok Park, Chinchwad</div>
+        <div class="text-sm">Pune, 411 033</div>
       </h4>
     </div>
     <div>
@@ -19,76 +19,113 @@
       </p>
     </div>
   </section>
-  <section class="py-8">
+  <section class="py-5">
     <span class="block">To,</span>
     <span class="block">{{ invoice.custName }}</span>
     <span class="block">{{ invoice.companyName }}</span>
   </section>
   <!-- <section class="py-8">
-    <div
-      class="flex flex-row w-full border border-black items-center align-middle p-3"
-    >
-      <div class="flex-grow"><strong> GSTN:</strong>&nbsp;33AACCV7701J1Z0</div>
-      <div class="flex-grow text-center font-medium">TAX INVOICE</div>
-      <div class="text-right flex-grow">Original for Recipient</div>
-    </div>
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class="border border-gray-300 p-4">S.No</th>
+          <th class="border border-gray-300 p-4">Particulars</th>
+          <th class="border border-gray-300 p-4">Vehicle No</th>
+          <th class="border border-gray-300 p-4">Model</th>
+          <th class="border border-gray-300 p-4">Starting Date</th>
+          <th class="border border-gray-300 p-4">Closing Date</th>
+          <th class="border border-gray-300 p-4">Starting Time</th>
+          <th class="border border-gray-300 p-4">Ending TIme</th>
+          <th class="border border-gray-300 p-4">Starting KM</th>
+          <th class="border border-gray-300 p-4">Ending KM</th>
+          <th class="border border-gray-300 p-4">Total KM</th>
+          <th class="border border-gray-300 p-4">Extra KM</th>
+          <th class="border border-gray-300 p-4">Extra Hours</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border border-gray-300 p-4">1</td>
+          <td class="border border-gray-300 p-4">{{ invoice.particulars }}</td>
+          <td class="border border-gray-300 p-4">{{ invoice.vehicleNo }}</td>
+          <td class="border border-gray-300 p-4">{{ invoice.model }}</td>
+          <td class="border border-gray-300 p-4">
+            {{ invoice.pickupDate | date }}
+          </td>
+          <td class="border border-gray-300 p-4">
+            {{ invoice.dropDate | date }}
+          </td>
+          <td class="border border-gray-300 p-4">{{ invoice.pickupTime }}</td>
+          <td class="border border-gray-300 p-4">{{ invoice.dropTime }}</td>
+          <td class="border border-gray-300 p-4">{{ invoice.startingKms }}</td>
+          <td class="border border-gray-300 p-4">{{ invoice.endingKms }}</td>
+          <td class="border border-gray-300 p-4">{{ invoice.totalKms }}</td>
+          <td class="border border-gray-300 p-4">
+            {{ invoice.totalExtraKms }}
+          </td>
+          <td class="border border-gray-300 p-4">
+            {{ invoice.totalExtraHrs }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </section> -->
   <section>
     <div class="flex flex-row justify-between">
-      <div class="border border-black flex flex-col basis-1/2">
+      <div class="border border-black flex flex-col w-2/5">
         <div class="p-2 border-b border-black">Particulars</div>
         <div class="p-3">
-          <span class="block">{{ invoice.particulars }}</span>
+          <span class="block text-sm">{{ invoice.particulars }}</span>
         </div>
       </div>
-      <div class="border border-black flex flex-col basis-1/2">
+      <div class="border border-black flex flex-col w-full">
         <div class="border-b border-black p-2">Vehicle Details</div>
         <section class="flex flex-row justify-between">
           <div class="flex flex-col w-2/3 border-r border-black">
             <div class="border-b border-black p-2">
-              <strong> Vehicle No </strong>
+              <div class="inline-block text-sm">Vehicle No</div>
               <span> {{ invoice.vehicleNo }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Model </strong>
+              <div class="inline-block text-sm">Model</div>
               <span> {{ invoice.model }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Starting Date </strong>
+              <div class="inline-block text-sm">Starting Date</div>
               <span> {{ invoice.pickupDate | date }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Closing Date </strong>
+              <div class="inline-block text-sm">Closing Date</div>
               <span> {{ invoice.dropDate | date }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Starting Time </strong>
+              <div class="inline-block text-sm">Starting Time</div>
               <span> {{ invoice.pickupTime }} </span>
             </div>
             <div class="p-2">
-              <strong> Ending TIme </strong>
+              <div class="inline-block text-sm">Ending TIme</div>
               <span> {{ invoice.dropTime }} </span>
             </div>
           </div>
           <div class="flex flex-col w-1/2">
             <div class="border-b border-black p-2">
-              <strong> Starting KM </strong>
+              <div class="inline-block text-sm">Starting KM</div>
               <span> {{ invoice.startingKms }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Ending KM </strong>
+              <div class="inline-block text-sm">Ending KM</div>
               <span> {{ invoice.endingKms }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Total KM </strong>
+              <div class="inline-block text-sm">Total KM</div>
               <span> {{ invoice.totalKms }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Extra KM </strong>
+              <div class="inline-block text-sm">Extra KM</div>
               <span> {{ invoice.totalExtraKms }} </span>
             </div>
             <div class="border-b border-black p-2">
-              <strong> Extra Hours </strong>
+              <div class="inline-block text-sm">Extra Hours</div>
               <span> {{ invoice.totalExtraHrs }} </span>
             </div>
           </div>
@@ -126,7 +163,9 @@
       </div>
     </div>
     <div class="flex flex-row justify-between w-2/3 border border-black">
-      <div class="border-r border-black basis-1/2 p-1">Driver's Allowance</div>
+      <div class="border-r border-black basis-1/2 p-1">
+        Driver's Night Allowance
+      </div>
       <div class="p-1">
         {{ invoice.driverAllowance | currency : "INR" }}
       </div>
