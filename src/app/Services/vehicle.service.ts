@@ -226,7 +226,8 @@ export class VehicleService {
     invoiceNumber: number,
     custName: string,
     companyName: string,
-    particulars: string
+    particulars: string,
+    invoiceDate: string
   ): number {
     const totalKms = endKms - startKms;
     let totalExtraHrsCost = 0;
@@ -308,6 +309,7 @@ export class VehicleService {
       custName,
       companyName,
       particulars,
+      invoiceDate,
     };
     this.addInvoiceToDb(updatedInvoice);
     return cost;
@@ -345,13 +347,25 @@ export class VehicleService {
           const dropDate = data.dropDate
             ? new Date((data.dropDate as any).seconds * 1000)
             : null;
+          const invoiceDate = data.invoiceDate
+            ? new Date((data.invoiceDate as any).seconds * 1000)
+            : null;
 
           // Return the updated invoice with replaced pickupDate and dropDate, and the id
+          const a = {
+            id: doc.id, // Ensure id is included
+            ...data, // Spread the rest of the data
+            invoiceDate, // Replace invoiceDate with the Date object
+            pickupDate, // Replace pickupDate with the Date object
+            dropDate, // Replace dropDate with the Date object
+          };
+          console.log(a);
           return {
             id: doc.id, // Ensure id is included
             ...data, // Spread the rest of the data
             pickupDate, // Replace pickupDate with the Date object
             dropDate, // Replace dropDate with the Date object
+            invoiceDate, // Replace invoiceDate with the Date object
           };
         });
       })
@@ -418,6 +432,9 @@ export class VehicleService {
         const dropDate = updatedData.dropDate
           ? new Date((updatedData.dropDate as any).seconds * 1000)
           : null;
+        const invoiceDate = updatedData.invoiceDate
+          ? new Date((updatedData.invoiceDate as any).seconds * 1000)
+          : null;
 
         // Return the updated invoice with replaced date values and id
         return {
@@ -425,6 +442,7 @@ export class VehicleService {
           ...updatedData, // Spread existing invoice data
           pickupDate, // Replace pickupDate
           dropDate, // Replace dropDate
+          invoiceDate, // Replace invoiceDate
         } as UpdatedInvoice;
       })
     );

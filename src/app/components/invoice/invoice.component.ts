@@ -69,7 +69,6 @@ export class InvoiceComponent implements OnInit {
   );
   dateFilter = (date: Date | null): boolean => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
     return date ? date <= today : false;
   };
 
@@ -132,6 +131,7 @@ export class InvoiceComponent implements OnInit {
         custName: new FormControl(null),
         companyName: new FormControl('Valeo Ind Pvt Ltd.'),
         invoiceNumber: new FormControl(null),
+        invoiceDate: new FormControl(new Date(), Validators.required),
         vehicleNumber: new FormControl(null, [
           Validators.required,
           Validators.min(8),
@@ -214,6 +214,7 @@ export class InvoiceComponent implements OnInit {
         custName,
         companyName,
         particulars,
+        invoiceDate,
       } = this.vehicleForm.value;
 
       const totalCost = this.vehicleFacade.calculateTotalCost(
@@ -233,7 +234,8 @@ export class InvoiceComponent implements OnInit {
         invoiceNumber,
         custName,
         companyName,
-        particulars
+        particulars,
+        invoiceDate
       );
 
       // Reset form after submission

@@ -43,6 +43,7 @@ export interface UpdatedInvoice {
   vehicleNo: string;
   model: string;
   pickupDate: Date | string | null;
+  invoiceDate: Date | string | null;
   pickupTime: string;
   dropDate: Date | string | null;
   dropTime: string;

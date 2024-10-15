@@ -189,11 +189,12 @@
 
       <div>
         <mat-form-field class="w-full">
-          <mat-label>invoice date</mat-label>
+          <mat-label>Invoice date</mat-label>
           <input
             matInput
             [matDatepicker]="picker"
             [matDatepickerFilter]="dateFilter"
+            formControlName="invoiceDate"
           />
           <mat-hint>MM/DD/YYYY</mat-hint>
           <mat-datepicker-toggle

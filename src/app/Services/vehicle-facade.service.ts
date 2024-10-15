@@ -32,7 +32,8 @@ export class VehicleFacadeService {
     invoiceNumber: number,
     custName: string,
     companyName: string,
-    particulars: string
+    particulars: string,
+    invoiceDate: string
   ) {
     return this.vehicleService.calculateTotalCost(
       vehicle,
@@ -51,7 +52,8 @@ export class VehicleFacadeService {
       invoiceNumber,
       custName,
       companyName,
-      particulars
+      particulars,
+      invoiceDate
     );
   }
 

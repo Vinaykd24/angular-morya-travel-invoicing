@@ -3,11 +3,12 @@ import { VehicleFacadeService } from '../../Services/vehicle-facade.service';
 import { CommonModule } from '@angular/common';
 import { UpdatedInvoice } from '../../models/common.models';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -26,13 +27,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatSnackBarModule,
   ],
   templateUrl: './invoice-list.component.html',
-  styleUrl: './invoice-list.component.scss',
+  styleUrls: ['./invoice-list.component.scss'],
 })
 export class InvoiceListComponent implements OnInit, AfterViewInit {
-  invoiceList$!: Observable<UpdatedInvoice[]>;
-  dataSource = new MatTableDataSource<UpdatedInvoice>();
+  private invoicesSubject = new BehaviorSubject<UpdatedInvoice[]>([]);
+  invoices$ = this.invoicesSubject.asObservable();
+
+  dataSource: MatTableDataSource<UpdatedInvoice>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
   displayedColumns: string[] = [
     'invoiceNumber',
     'model',
@@ -50,15 +54,20 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   constructor(
     private vehicleFacadeService: VehicleFacadeService,
     private router: Router
-  ) {}
+  ) {
+    this.dataSource = new MatTableDataSource<UpdatedInvoice>([]);
+  }
 
   ngOnInit(): void {
     this.loadInvoices();
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.invoices$.subscribe((invoices) => {
+      this.dataSource.data = invoices;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
 
     this.dataSource.sortingDataAccessor = (
       item: UpdatedInvoice,
@@ -72,29 +81,24 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
           return (item as any)[property];
       }
     };
+
+    // Initialize sort
+    this.sort.sort({ id: 'invoiceNumber', start: 'desc', disableClear: false });
   }
 
   loadInvoices() {
-    this.vehicleFacadeService.getAllInvoicesFromDb().subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-        setTimeout(() => {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-
-          // Force a sort by invoiceNumber after data is loaded
-          this.sort.sort({
-            id: 'invoiceNumber',
-            start: 'desc',
-            disableClear: false,
-          });
-          this.dataSource.sort = this.sort;
-        });
-      },
-      error: (error) => {
-        console.error('Error fetching invoices:', error);
-      },
-    });
+    this.vehicleFacadeService
+      .getAllInvoicesFromDb()
+      .pipe(
+        tap((invoices) => {
+          this.invoicesSubject.next(invoices);
+        })
+      )
+      .subscribe({
+        error: (error) => {
+          console.error('Error fetching invoices:', error);
+        },
+      });
   }
 
   viewInvoice(id: string) {
@@ -102,10 +106,21 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   }
 
   deleteInvoice(id: string) {
-    this.vehicleFacadeService.deleteInvoiceFromDb(id);
-    return this.vehicleFacadeService.showSnackBar(
-      'Invoice deleted successfully'
-    );
+    this.vehicleFacadeService
+      .deleteInvoiceFromDb(id)
+      .pipe(switchMap(() => this.vehicleFacadeService.getAllInvoicesFromDb()))
+      .subscribe({
+        next: (updatedInvoices) => {
+          this.invoicesSubject.next(updatedInvoices);
+          this.vehicleFacadeService.showSnackBar(
+            'Invoice deleted successfully'
+          );
+        },
+        error: (error) => {
+          console.error('Error deleting invoice:', error);
+          this.vehicleFacadeService.showSnackBar('Error deleting invoice');
+        },
+      });
   }
 
   applyFilter(event: Event) {
